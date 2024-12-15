@@ -2,20 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light Mode Variables */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--color-deep-blue: #002b5b;
+	--color-calm-teal: #004f8a;
+	--color-sky-blue: #0079c1;
+	--color-soft-blue: #a7d8f0;
+	--color-pale-blue: #e6f4fa;
+	--radius: 0.5rem;
+	/* Semantic Variables */
+	--background: var(--color-pale-blue);
+	--foreground: var(--color-deep-blue);
+	--primary-color: var(--color-deep-blue);
+	--secondary-color: var(--color-calm-teal);
+	--highlight1-color: var(--color-sky-blue);
+	--highlight2-color: var(--color-pale-blue);
+	--card-background: var(--color-soft-blue);
 }
 
+/* Dark Mode Variables */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+	:root {
+		--background: var(--color-deep-blue);
+		--foreground: var(--color-pale-blue);
+		--primary-color: var(--color-pale-blue);
+		--secondary-color: var(--color-sky-blue);
+		--highlight1-color: var(--color-soft-blue);
+		--highlight2-color: var(--color-deep-blue);
+		--card-background: var(--color-sky-blue);
+	}
 }
 
+/* Base Styles */
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+	background-color: var(--background);
+	font-family: Arial, Helvetica, sans-serif;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button-primary {
+	background-color: var(--primary-color);
+	color: var(--foreground);
+	border: none;
+	padding: 0.75rem 1.5rem;
+	border-radius: 0.375rem;
+	cursor: pointer;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button-primary:hover {
+	background-color: var(--secondary-color);
+}
+
+.transition-200 {
+	@apply transition-all duration-200 ease-in-out;
+}
+
+.transition-500 {
+	@apply transition-all duration-500 ease-in-out;
+}
+
+.transition-700 {
+	@apply transition-all duration-700 ease-in-out;
+}
+
+.transition-1000 {
+	@apply transition-all duration-1000 ease-in-out;
 }
