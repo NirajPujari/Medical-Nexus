@@ -78,10 +78,7 @@ export const Navbar = () => {
 					</DropdownMenu>
 
 					<SignedOut>
-						<Link
-							href="/login"
-							className="bg-highlight2 text-highlight1 font-semibold px-6 py-2 rounded-md shadow-lg hover:text-highlight2 hover:shadow-card hover:bg-primary hover:shadow-md hover:scale-105 transition-500"
-						>
+						<Link href="/login" className="button-primary">
 							Login
 						</Link>
 					</SignedOut>

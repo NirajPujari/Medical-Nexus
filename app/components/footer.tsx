@@ -1,13 +1,15 @@
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Home, Info, Phone, Stethoscope } from "lucide-react";
 
 export const Footer = () => {
 	const pathname = usePathname();
 	const noPaths = ["/login", "/signup"];
 
 	if (noPaths.includes(pathname)) {
-		return;
+		return null; // Explicitly return null if footer should not be rendered
 	}
 
 	return (
@@ -17,7 +19,7 @@ export const Footer = () => {
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 					{/* About Section */}
 					<div>
-						<h3 className="text-lg font-bold mb-4">
+						<h3 className="text-lg font-bold mb-2">
 							Medical Nexus
 						</h3>
 						<p className="text-sm">
@@ -29,46 +31,30 @@ export const Footer = () => {
 
 					{/* Links Section */}
 					<div>
-						<h3 className="text-lg font-bold mb-4">Quick Links</h3>
-						<ul className="space-y-2 text-sm">
-							<li>
-								<Link
-									href="/"
-									className="hover:text-highlight1 transition"
-								>
-									Home
-								</Link>
-							</li>
-							<li>
-								<a
-									href="/about"
-									className="hover:text-highlight1 transition"
-								>
-									About Us
-								</a>
-							</li>
-							<li>
-								<a
-									href="/services"
-									className="hover:text-highlight1 transition"
-								>
-									Our Services
-								</a>
-							</li>
-							<li>
-								<a
-									href="/contact"
-									className="hover:text-highlight1 transition"
-								>
-									Contact
-								</a>
-							</li>
+						<h3 className="text-lg font-bold mb-2">Quick Links</h3>
+						<ul className="text-sm">
+							<FooterItem href="/" label="Home" Icons={Home} />
+							<FooterItem
+								href="/about"
+								label="About Us"
+								Icons={Info}
+							/>
+							<FooterItem
+								href="/services"
+								label="Our Services"
+								Icons={Stethoscope}
+							/>
+							<FooterItem
+								href="/contact"
+								label="Contact"
+								Icons={Phone}
+							/>
 						</ul>
 					</div>
 
 					{/* Contact Section */}
 					<div>
-						<h3 className="text-lg font-bold mb-4">Contact Us</h3>
+						<h3 className="text-lg font-bold mb-2">Contact Us</h3>
 						<ul className="text-sm space-y-2">
 							<li>
 								<span className="font-semibold">Email:</span>{" "}
@@ -97,3 +83,28 @@ export const Footer = () => {
 		</footer>
 	);
 };
+
+function FooterItem({
+	href,
+	label,
+	Icons,
+}: {
+	href: string;
+	label: string;
+	Icons: React.ElementType;
+}) {
+	return (
+		<li>
+			<Link
+				href={href}
+				className="group flex items-center font-semibold space-x-1 px-3 py-2 rounded-md transition-700 text-highlight2 hover:text-card w-fit"
+			>
+				<span className="relative flex gap-2">
+					<Icons className="w-4 h-4 mt-[2px] text-highlight2 group-hover:text-card" />
+					{label}
+					<span className="absolute left-0 bottom-0 w-0 h-0.5 bg-card transition-500 group-hover:w-full"></span>
+				</span>
+			</Link>
+		</li>
+	);
+}
