@@ -12,6 +12,7 @@ export default function Home() {
 						colorTextSecondary: "#004f8a",
 						colorNeutral: "#004f8a",
 					},
+
 					elements: {
 						// Container size
 						cardBox: "w-[550px] shadow-md flex justify-center",
