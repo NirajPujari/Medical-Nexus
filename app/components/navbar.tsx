@@ -94,7 +94,6 @@ export const Navbar = () => {
 										colorNeutral: "#004f8a",
 									},
 								}}
-								userProfileUrl="/profile"
 								afterMultiSessionSingleSignOutUrl="/"
 							/>
 						</div>
