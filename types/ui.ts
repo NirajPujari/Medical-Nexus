@@ -35,11 +35,15 @@ export type ComboboxOption = {
 export interface ComboboxWrapperProps {
 	options: ComboboxOption[];
 	placeholder?: string;
+	style?: {
+		button?: string;
+		content?: string;
+		command?: string;
+	};
 }
 
 export interface ComboboxProps extends ComboboxWrapperProps {
-	buttonClassName?: string; // Class name for the trigger button
-	contentClassName?: string; // Class name for the dropdown content
+
 	onSelect: (selected: ComboboxOption | null) => void; // Callback for selection
 }
 

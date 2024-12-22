@@ -83,13 +83,16 @@ export default function Page() {
       <section className="bg-background py-20 text-foreground">
         <div className="container mx-auto flex flex-col items-center justify-center gap-20 px-4 md:flex-row">
           {/* Left Content */}
-          <div className="flex min-h-[40rem] max-w-xl flex-1 items-center justify-center rounded-3xl bg-foreground px-8 text-background">
+          <div className="min-h-[40rem] max-w-xl flex-1 rounded-3xl bg-foreground px-8 py-10 text-background shadow-shadow shadow-black">
             <div>
-              <h2 className="mb-4 text-3xl font-bold">For Patients</h2>
-              <p className="mb-8 text-sm">
+              <h2 className="relative mb-4 text-3xl font-bold before:absolute before:-bottom-2 before:left-0 before:h-1 before:w-24 before:bg-highlight2">
+                For Patients
+              </h2>
+
+              <p className="my-8 text-sm">
                 Which of these health care services can we help you with?
               </p>
-              <div className="flex flex-wrap gap-5">
+              <div className="flex flex-wrap items-center justify-center gap-5">
                 {links.map(({ label, href }, items) => (
                   <Link
                     key={items}
@@ -100,39 +103,41 @@ export default function Page() {
                   </Link>
                 ))}
               </div>
-              <Link href="/appointment" className="">
+              <Link href="/appointment">
                 <Image
                   src="/images/home/consultation-banner.png"
                   alt="consultation-banner"
                   width={594}
                   height={174}
-                  className=""
+                  className="pt-10"
                 />
               </Link>
             </div>
           </div>
           {/* Right Content */}
-          <div className="flex min-h-[40rem] max-w-xl flex-1 items-center justify-center rounded-3xl border px-8">
-            <div>
-              <h2 className="mb-4 text-3xl font-bold">
-                Know About Our Specialities, Doctors & Clinics
-              </h2>
-              <p className="mb-8 text-sm">
-                Find the right doctor for your needs
-              </p>
-              <div className="flex gap-5">
-                <ComboboxWrapper
-                  options={specialties}
-                  placeholder="Select an Specialties..."
-                />
-                <Image
-                  src="/images/home/doc.png"
-                  alt="doc"
-                  width={300}
-                  height={100}
-                  className=""
-                />
-              </div>
+          <div className="min-h-[40rem] max-w-xl flex-1 rounded-3xl px-8 py-10 shadow-shadow shadow-black">
+            <h2 className="relative mb-4 text-3xl font-bold before:absolute before:-bottom-2 before:left-0 before:h-1 before:w-24 before:bg-primary">
+              Know About Our Specialities, Doctors & Clinics
+            </h2>
+            <p className="my-8 text-sm">Find the right doctor for your needs</p>
+            <div className="flex flex-col items-center justify-center gap-10 px-4">
+              <ComboboxWrapper
+                options={specialties}
+                placeholder="Select an Specialties..."
+                style={{
+                  button: "bg-primary text-highlight2 w-full",
+                  command: "bg-primary text-highlight2",
+                }}
+              />
+            </div>
+            <div className="relative h-72">
+              <Image
+                src="/images/home/doc.png"
+                alt=""
+                width={300}
+                height={100}
+                className="absolute bottom-0 right-0"
+              />
             </div>
           </div>
         </div>
