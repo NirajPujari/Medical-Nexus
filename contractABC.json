@@ -1,0 +1,804 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_patientId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_accessorId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_role",
+        "type": "string"
+      }
+    ],
+    "name": "addAuthorizedPerson",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_doctorAddress",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_specialization",
+        "type": "string"
+      },
+      {
+        "internalType": "string[][]",
+        "name": "_availability",
+        "type": "string[][]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_assignedPatients",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "string",
+        "name": "_accessorId",
+        "type": "string"
+      }
+    ],
+    "name": "addDoctor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_age",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_bloodGroup",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_medicalHistory",
+        "type": "string"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "fileName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "timestamp",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "filePath",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "fileType",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "fileHash",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct HospitalManagementSystem.File[]",
+        "name": "_files",
+        "type": "tuple[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "personAddress",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "role",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct HospitalManagementSystem.AuthorizedPerson[]",
+        "name": "_authorizedPersons",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "addPatient",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_patientId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_doctorId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_accessorId",
+        "type": "string"
+      }
+    ],
+    "name": "assignPatientToDoctor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_appointmentId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_patientId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_doctorId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_timestamp",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_dayOfWeek",
+        "type": "uint256"
+      }
+    ],
+    "name": "bookAppointment",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_doctorId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_dayOfWeek",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_slot",
+        "type": "string"
+      }
+    ],
+    "name": "checkDoctorSlot",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "a",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "b",
+        "type": "string"
+      }
+    ],
+    "name": "compareStrings",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_patientId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_fileIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_accessorId",
+        "type": "string"
+      }
+    ],
+    "name": "deleteFileFromPatient",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_accessorType",
+        "type": "string"
+      }
+    ],
+    "name": "fetchAppointments",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "patientId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "doctorId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "timestamp",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "status",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct HospitalManagementSystem.Appointment[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fetchLatestID",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_accessorId",
+        "type": "string"
+      }
+    ],
+    "name": "getAllDoctor",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "doctorAddress",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "specialization",
+            "type": "string"
+          },
+          {
+            "internalType": "string[][]",
+            "name": "availability",
+            "type": "string[][]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "assignedPatients",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct HospitalManagementSystem.Doctor[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_accessorId",
+        "type": "string"
+      }
+    ],
+    "name": "getAllPatients",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "age",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "bloodGroup",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "medicalHistory",
+            "type": "string"
+          },
+          {
+            "components": [
+              {
+                "internalType": "string",
+                "name": "fileName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "timestamp",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "filePath",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "fileType",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "fileHash",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct HospitalManagementSystem.File[]",
+            "name": "files",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "string",
+                "name": "personAddress",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "role",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct HospitalManagementSystem.AuthorizedPerson[]",
+            "name": "authorizedPersons",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct HospitalManagementSystem.Patient[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_doctorId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_accessorId",
+        "type": "string"
+      }
+    ],
+    "name": "getDoctor",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "doctorAddress",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "specialization",
+            "type": "string"
+          },
+          {
+            "internalType": "string[][]",
+            "name": "availability",
+            "type": "string[][]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "assignedPatients",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct HospitalManagementSystem.Doctor",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_accessorId",
+        "type": "string"
+      }
+    ],
+    "name": "getPatient",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "age",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "bloodGroup",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "medicalHistory",
+            "type": "string"
+          },
+          {
+            "components": [
+              {
+                "internalType": "string",
+                "name": "fileName",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "timestamp",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "filePath",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "fileType",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "fileHash",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct HospitalManagementSystem.File[]",
+            "name": "files",
+            "type": "tuple[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "string",
+                "name": "personAddress",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "role",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct HospitalManagementSystem.AuthorizedPerson[]",
+            "name": "authorizedPersons",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct HospitalManagementSystem.Patient",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_patientId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "_fileIndex",
+        "type": "int256"
+      },
+      {
+        "internalType": "string",
+        "name": "_fileName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_timestamp",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_filePath",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_fileType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_fileHash",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_accessorId",
+        "type": "string"
+      }
+    ],
+    "name": "manageFileInPatient",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_doctorId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_dayOfWeek",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string[]",
+        "name": "_timeSlots",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string",
+        "name": "_accessorId",
+        "type": "string"
+      }
+    ],
+    "name": "setDoctorAvailability",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "uintToString",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_appointmentId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_newStatus",
+        "type": "string"
+      }
+    ],
+    "name": "updateAppointmentStatus",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "patientId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "doctorId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "timestamp",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "status",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct HospitalManagementSystem.Appointment[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
