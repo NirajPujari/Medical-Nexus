@@ -1,4 +1,4 @@
-// /pages/api/patient/doctors/route.ts
+// /app/api/patient/doctors/fetch/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { initContract } from '@api/utils';
 import { PatientAuthorizedPersonsType } from '@/types/api/patient';

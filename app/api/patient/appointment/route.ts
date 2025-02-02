@@ -1,4 +1,4 @@
-// /pages/api/patient/route.ts
+// /app/api/patient/appointment/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { initContract } from '@api/utils';
 import { AppointmentType } from '@/types/api/appointment';

@@ -1,4 +1,4 @@
-// /pages/api/patient/file/route.ts
+// /app/api/patient/file/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureUploadDirExists, getAllFiles, initContract, uploadWeb3Client, saveFile } from '@api/utils';
 import path from 'path';

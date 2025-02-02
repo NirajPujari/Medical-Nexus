@@ -45,7 +45,7 @@ export default function Home() {
             },
           }}
           routing="hash"
-          forceRedirectUrl="/"
+          forceRedirectUrl="/redirect"
           signUpUrl="/signup"
         />
       </div>

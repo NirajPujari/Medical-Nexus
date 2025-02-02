@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// /pages/api/doctor/fetch/route.ts
+// /app/api/doctor/fetch/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { initContract } from '@api/utils';
 import { DoctorType } from '@/types/api/doctor';

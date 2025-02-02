@@ -1,4 +1,4 @@
-// /pages/api/doctor/availability/fetch/route.ts
+// /app/api/doctor/availability/fetch/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { initContract } from '@api/utils';
 

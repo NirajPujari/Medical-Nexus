@@ -1,3 +1,4 @@
+// /app/api/patient/fetchAll/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { initContract } from '@api/utils';
 import { PatientAuthorizedPersonsType, PatientFileType, PatientType } from '@/types/api/patient';

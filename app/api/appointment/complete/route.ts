@@ -1,4 +1,4 @@
-// /pages/api/appointment/complete/route.ts
+// /app/api/appointment/complete/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { initContract } from '@api/utils';
 

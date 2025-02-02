@@ -1,3 +1,4 @@
+// /app/api/patient/fetch/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { initContract } from '@api/utils';
 import { EventEmitter } from 'events';

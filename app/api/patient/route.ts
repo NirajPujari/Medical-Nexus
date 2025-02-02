@@ -1,4 +1,4 @@
-// /pages/api/patient/route.ts
+// /app/api/patient/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { initContract } from '@api/utils';
 

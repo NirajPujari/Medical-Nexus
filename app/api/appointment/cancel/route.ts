@@ -1,4 +1,4 @@
-// /pages/api/appointment/cancel/route.ts
+// /app/api/appointment/cancel/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { initContract } from '@api/utils';
 

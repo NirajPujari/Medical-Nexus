@@ -2,13 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { Users, Stethoscope, Phone, Info, Bell, Settings } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import { Users, Stethoscope, Phone, Info } from "lucide-react";
 
 export const Navbar = () => {
   const pathname = usePathname();
@@ -18,7 +12,7 @@ export const Navbar = () => {
     return;
   }
   return (
-    <nav className="bg-primary p-4 text-highlight2">
+    <nav className="min-w-full sticky z-[100] bg-primary p-4 text-highlight2">
       <div className="flex items-center justify-between">
         <div className="flex items-center justify-center gap-8">
           <Link
@@ -38,37 +32,7 @@ export const Navbar = () => {
             <NavItem href="/contact" label="Contact" Icons={Phone} />
           </div>
         </div>
-        <div className="flex items-center justify-center gap-4">
-          <Bell className="transition-500 m-1 h-9 w-9 rounded-3xl p-2 hover:bg-highlight2 hover:text-primary" />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                title="setting"
-                type="button"
-                className="focus:outline-none"
-              >
-                <Settings className="transition-500 m-1 h-9 w-9 rounded-3xl p-2 hover:bg-highlight2 hover:text-primary" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="space-y-2 bg-primary text-highlight2 shadow-black">
-              <DropdownMenuItem
-                asChild
-                className="hover:bg-htext-highlight2 transition-500 text-base hover:text-primary"
-              >
-                <Link href="/profile">Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                asChild
-                className="hover:bg-htext-highlight2 transition-500 text-base hover:text-primary"
-              >
-                <Link href="/settings">Settings</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-htext-highlight2 transition-500 text-base hover:text-primary">
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+        <div className="flex items-center justify-center">
           <SignedOut>
             <Link href="/login" className="button-primary">
               Login

@@ -1,4 +1,4 @@
-// /pages/api/patient/file/delete/route.ts
+// /app/api/patient/file/delete/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { deleteFilesAndFolder, getAllFiles, initContract, uploadWeb3Client } from '@api/utils';
 
