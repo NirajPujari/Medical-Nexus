@@ -6,3 +6,10 @@ export type AppointmentType = {
   status: string;
 }
 
+export type AppointmentDisplayType ={
+  id: number,
+  patientName: string,
+  date: string,
+  time: string,
+  status: string, 
+}

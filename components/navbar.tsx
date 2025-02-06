@@ -1,14 +1,15 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import { Users, Stethoscope, Phone, Info } from "lucide-react";
 
 export const Navbar = () => {
   const pathname = usePathname();
-  const noPaths = ["/login", "/signup"];
+  const { user } = useUser()
+  const noPaths = ["/login", "/signup", "/entry"];
 
-  if (noPaths.includes(pathname)) {
+  if (noPaths.some(sub => pathname.includes(sub))) {
     return;
   }
   return (
@@ -39,6 +40,11 @@ export const Navbar = () => {
             </Link>
           </SignedOut>
           <SignedIn>
+            <div className="flex justify-center items-center gap-4">
+
+          <Link href={user?.publicMetadata?.isDoc ? "/dashboard/doctor" : "/dashboard/patient"} className="px-4 py-2 rounded-lg bg-card text-primary font-semibold transition-500 hover:bg-highlight2 hover:scale-105">
+                Dashboard
+              </Link>
             <div className="transition-500 flex justify-center rounded-3xl p-2 hover:bg-highlight2 hover:text-primary">
               <UserButton
                 appearance={{
@@ -52,6 +58,7 @@ export const Navbar = () => {
                 }}
                 afterMultiSessionSingleSignOutUrl="/"
               />
+            </div>
             </div>
           </SignedIn>
         </div>

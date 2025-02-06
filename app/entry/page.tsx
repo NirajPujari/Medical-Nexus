@@ -1,5 +1,6 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -15,58 +16,68 @@ export default function EntryForm() {
     medicalHistory: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const router = useRouter();
+  const { user} = useUser();
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.firstName.trim())
-      newErrors.firstName = "First name is required.";
-    if (!formData.lastName.trim())
-      newErrors.lastName = "Last name is required.";
-    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Enter a valid email.";
-    if (
-      !formData.age.trim() ||
-      isNaN(Number(formData.age)) ||
-      Number(formData.age) <= 0
-    )
-      newErrors.age = "Enter a valid age.";
-    if (!formData.bloodGroup.trim())
-      newErrors.bloodGroup = "Blood group is required.";
-    if (!formData.medicalHistory.trim())
-      newErrors.medicalHistory = "Medical history is required.";
+    if (!formData.firstName.trim()) newErrors.firstName = "First name is required.";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required.";
+    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Enter a valid email.";
+    if (!formData.age.trim() || isNaN(Number(formData.age)) || Number(formData.age) <= 0) newErrors.age = "Enter a valid age.";
+    if (!formData.bloodGroup.trim()) newErrors.bloodGroup = "Blood group is required.";
+    if (!formData.medicalHistory.trim()) newErrors.medicalHistory = "Medical history is required.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (validateForm()) {
-  //     setIsSubmitting(true);
-  //     console.log("Form Submitted:", formData);
-  //   }
-  // };
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (validateForm()) {
         setIsSubmitting(true);
-        setTimeout(() => {
+        try {
+          const response = await fetch("/api/patient", {
+            method: "POST",
+            body: JSON.stringify({
+              name: `${formData.firstName} ${formData.lastName}`,
+              age: Number(formData.age),
+              bloodGroup: formData.bloodGroup,
+              medicalHistory: formData.medicalHistory,
+            }),
+          });
+          const data = await response.json();
+          await user?.update({
+            unsafeMetadata: {
+              isNewUser: false,
+              clientId: data.id,
+            },
+          });
+          fetch("/api/mongo/patient", {
+            method: "POST",
+            body: JSON.stringify({
+              name: `${formData.firstName} ${formData.lastName}`,
+              id: data.id,
+              email:formData.email
+            }),
+          });
+          setTimeout(() => {
+            console.log("Form submitted successfully!");
+            router.replace("/");
+          }, 500); // Delayed to allow form state reset
+        } catch (error) {
+          console.error(error);
+          alert("Something went wrong. Please try again.");
+        } finally {
           setIsSubmitting(false);
-          alert("Form submitted successfully!");
           setFormData({
             firstName: "",
             lastName: "",
@@ -75,12 +86,12 @@ export default function EntryForm() {
             bloodGroup: "",
             medicalHistory: "",
           });
-        }, 2000);
-        router.replace("/")
+        }
       }
     },
-    [formData],
+    [formData, user, router]
   );
+
 
   return (
     <div className="flex min-h-screen items-center justify-center p-10">

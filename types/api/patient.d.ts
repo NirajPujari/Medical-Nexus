@@ -20,8 +20,8 @@ export type PatientType = {
   age: number;
   bloodGroup: string,
   medicalHistory: string,
-  files: patientFileType;
-  authorizedPersons: patientAuthorizedPersonsType
+  files: patientFileType[];
+  authorizedPersons: patientAuthorizedPersonsType[]
 }
 
 export type FileType = {

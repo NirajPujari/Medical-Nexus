@@ -6,10 +6,10 @@ import { Home, Info, Phone, Stethoscope } from "lucide-react";
 
 export const Footer = () => {
   const pathname = usePathname();
-  const noPaths = ["/login", "/signup"];
+  const noPaths = ["/login", "/signup","/entry"];
 
-  if (noPaths.includes(pathname)) {
-    return null; // Explicitly return null if footer should not be rendered
+  if (noPaths.some(sub => pathname.includes(sub))) {
+    return; // Explicitly return null if footer should not be rendered
   }
 
   return (

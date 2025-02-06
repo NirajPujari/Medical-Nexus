@@ -65,16 +65,36 @@ export const images = [
     alt: "1",
   },
   {
-    src: "/images/filler/2.jpg",
+    src: "/images/filler/1.png",
+    alt: "1",
+  },
+  {
+    src: "/images/filler/1.png",
+    alt: "1",
+  },
+  {
+    src: "/images/filler/1.png",
+    alt: "1",
+  },
+  {
+    src: "/images/filler/1.jpg",
+    alt: "1",
+  },
+  {
+    src: "/images/filler/1.png",
     alt: "2",
   },
   {
-    src: "/images/filler/3.jpeg",
+    src: "/images/filler/2.jpg",
     alt: "3",
   },
   {
-    src: "/images/filler/hero.png",
+    src: "/images/filler/3.jpeg",
     alt: "4",
+  },
+  {
+    src: "/images/filler/hero.png",
+    alt: "5",
   },
 ];
 

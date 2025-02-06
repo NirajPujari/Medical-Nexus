@@ -5,69 +5,48 @@ import { useRouter } from "next/navigation";
 import { LayoutGrid, List } from "lucide-react";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
+import { MotionUI } from "@/components/ui/motion"; // Import MotionUI component
 
 interface Doctor {
-  id: number;
+  _id: number;
   name: string;
   specialty: string;
   image: string;
 }
 
-const defaultDoctors: Doctor[] = [
-  {
-    id: 1,
-    name: "Dr. Alice Johnson",
-    specialty: "Cardiologist",
-    image: "/images/placeholder/placeholder.jpg",
-  },
-  {
-    id: 2,
-    name: "Dr. Bob Smith",
-    specialty: "Dermatologist",
-    image: "/images/placeholder/placeholder.jpg",
-  },
-  {
-    id: 3,
-    name: "Dr. Carol Williams",
-    specialty: "Neurologist",
-    image: "/images/placeholder/placeholder.jpg",
-  },
-];
 
 const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "2:00 PM", "4:00 PM"];
 
 export default function DoctorsList() {
   const { isSignedIn } = useUser();
   const router = useRouter();
-
-  const [doctors, setDoctors] = useState<Doctor[]>(defaultDoctors);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
 
-  // Fetch doctors data
   useEffect(() => {
     setViewMode(
       typeof window !== "undefined" && window.innerWidth > 500
         ? "grid"
-        : "list",
+        : "list"
     );
+    setIsLoading(true)
     const fetchDoctors = async () => {
       try {
         const res = await fetch("/api/mongo/doctor");
         if (!res.ok) throw new Error("Failed to fetch doctors");
         const data = await res.json();
-        console.log(data)
         setDoctors(data);
+        setIsLoading(false)
       } catch (error) {
         console.error(error);
       }
     };
-
-    setTimeout(fetchDoctors);
+    fetchDoctors( ); // Added delay for effect
   }, []);
 
   const openModal = useCallback(
@@ -79,7 +58,7 @@ export default function DoctorsList() {
       setSelectedDoctor(doctor);
       setIsModalOpen(true);
     },
-    [isSignedIn, router],
+    [isSignedIn, router]
   );
 
   const handleConfirmBooking = useCallback(async () => {
@@ -96,7 +75,7 @@ export default function DoctorsList() {
         },
         body: JSON.stringify({
           patientId: "",
-          doctorId: selectedDoctor.id,
+          doctorId: selectedDoctor._id,
           date: selectedDate,
           timeSlot: selectedTime,
         }),
@@ -142,15 +121,48 @@ export default function DoctorsList() {
       </div>
 
       {/* Doctors Grid/List View */}
-      <div
+      <MotionUI
+        Tag="div"
         className={`flex flex-wrap justify-center gap-6 ${
           viewMode === "list" ? "flex-col items-center" : ""
         }`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        view
       >
-        {doctors.map((doctor) => (
-          <div
-            key={doctor.id}
-            className="transition-300 min-w-[300px] rounded-lg bg-card p-4 shadow-md hover:shadow-lg"
+        {isLoading
+          ? Array.from({ length: 6 }).map((_, index) => (
+            <MotionUI
+            key={index}
+            Tag="div"
+            className="transition-300 rounded-lg bg-primary p-4 shadow-md hover:shadow-lg"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            view
+          >
+            <div
+                className="w-60 h-80 rounded-lg animate-pulse"
+              ></div>
+            
+            <button
+            disabled
+              className="transition-500 mt-4 w-full rounded-lg bg-secondary py-2 text-primary hover:bg-primary border-2 border-secondary hover:text-secondary"
+            >
+              Book Appointment
+            </button>
+          </MotionUI>
+            ))
+          : doctors.map((doctor, index) => (
+          <MotionUI
+            key={doctor._id}
+            Tag="div"
+            className="transition-300 min-w-[300px] rounded-lg bg-primary p-4 shadow-md hover:shadow-lg"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            view
           >
             <Image
               src={doctor.image}
@@ -159,49 +171,60 @@ export default function DoctorsList() {
               width={300}
               height={200}
             />
-            <h3 className="text-center text-xl font-semibold text-primary">
+            <h3 className="text-center text-xl font-semibold text-highlight2">
               {doctor.name}
             </h3>
-            <p className="text-center text-sm text-primary">
+            <p className="text-center text-sm text-secondary">
               {doctor.specialty}
             </p>
-
             <button
               onClick={() => openModal(doctor)}
-              className="transition-300 mt-4 w-full rounded-lg bg-primary py-2 text-secondary hover:bg-highlight1 hover:text-primary"
+              className="transition-500 mt-4 w-full rounded-lg bg-secondary py-2 text-primary hover:bg-primary border-2 border-secondary hover:text-secondary"
             >
               Book Appointment
             </button>
-          </div>
+          </MotionUI>
         ))}
-      </div>
+      </MotionUI>
 
       {/* Booking Modal */}
       {isModalOpen && selectedDoctor && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-[350px] rounded-lg bg-white p-6 shadow-lg">
+        <MotionUI
+          Tag="div"
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <MotionUI
+            Tag="div"
+            className="w-[350px] rounded-lg bg-primary   p-6 shadow-lg"
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
             <h2 className="text-lg font-semibold text-secondary">
               Book Appointment
             </h2>
-            <p className="text-sm text-gray-700">{selectedDoctor.name}</p>
+            <p className="text-sm text-highlight2">{selectedDoctor.name}</p>
 
-            <label className="mt-4 block text-sm font-medium text-gray-700">
+            <label className="mt-4 block text-sm font-medium text-card">
               Select Date
             </label>
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full rounded-md border p-2 text-gray-700 focus:outline-none"
+              className="w-full rounded-md p-2 text-highlight2 bg-primary focus:outline-none"
             />
 
-            <label className="mt-4 block text-sm font-medium text-gray-700">
+            <label className="mt-4 block text-sm font-medium text-card">
               Select Time Slot
             </label>
             <select
               value={selectedTime}
               onChange={(e) => setSelectedTime(e.target.value)}
-              className="w-full rounded-md border p-2 text-gray-700 focus:outline-none"
+              className="w-full rounded-md p-2 text-highlight2 bg-primary focus:outline-none"
             >
               <option value="">Choose a time</option>
               {timeSlots.map((slot) => (
@@ -214,19 +237,19 @@ export default function DoctorsList() {
             <div className="mt-6 flex justify-end gap-3">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="transition-300 rounded-md bg-gray-400 px-4 py-2 text-primary hover:bg-black"
+                className="transition-500 rounded-md bg-gray-400 px-4 py-2 text-primary hover:bg-black"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmBooking}
-                className="transition-300 rounded-md bg-secondary px-4 py-2 text-primary hover:bg-highlight2"
+                className="transition-500 rounded-md bg-secondary px-4 py-2 text-primary hover:bg-highlight2"
               >
                 Confirm
               </button>
             </div>
-          </div>
-        </div>
+          </MotionUI>
+        </MotionUI>
       )}
     </div>
   );

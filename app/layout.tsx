@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
+// import { Redirect } from "@/components/redirect";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Footer } from "@/components/footer";
 
@@ -14,11 +15,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  
   return (
     <ClerkProvider>
       <html lang="en">
         <body className="antialiased">
           <Navbar />
+          {/* <Redirect /> */}
           {children}
           <Footer />
         </body>

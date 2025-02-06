@@ -1,16 +1,43 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
 import { MotionUI } from "@/components/ui/motion";
-import { Carousel } from "@/components/ui/carousal";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { images, links, specialties } from "./data";
 import { ComboboxWrapper } from "@/components/ui/comboBox";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function Page() {
   return (
     <>
-      <section className="bg-background text-foreground">
-        <Carousel images={images} />
+      <section className="relative w-full -mt-20 mx-auto">
+        <Carousel
+          className="rounded-lg shadow-md overflow-hidden"
+          plugins={[Autoplay({ delay: 3000 })]}
+        >
+          <CarouselContent className="flex justify-center items-center h-full">
+            {images.map((image, id) => (
+              <CarouselItem key={id} className="flex justify-center h-screen">
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  width={2000}
+                  height={1000}
+                  objectFit="cover"
+                  loading="lazy"
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+
+          {/* Navigation Buttons */}
+          <CarouselPrevious className="absolute left-4 top-1/2 z-10 -translate-y-1/2 bg-highlight2 p-2 rounded-full shadow-md hover:bg-highlight1 transition-transform duration-300 active:scale-90" />
+          <CarouselNext className="absolute right-4 top-1/2 z-10 -translate-y-1/2 bg-highlight2 p-2 rounded-full shadow-md hover:bg-highlight1 transition-transform duration-300 active:scale-90" />
+        </Carousel>
       </section>
+
+
+
       <section className="bg-background py-20 text-foreground">
         <div className="container mx-auto flex flex-col items-center gap-12 px-4 md:flex-row">
           {/* Left Content */}
