@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import Autoplay from "embla-carousel-autoplay";
+import Link from "next/link";
 import { motion } from "framer-motion";
+import { useUser } from "@clerk/nextjs";
 import {
   Carousel,
   CarouselContent,
@@ -9,10 +11,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
 import { PatientType } from "@/types/api/patient";
 import { AppointmentDisplayType } from "@/types/api/appointment";
-import Link from "next/link";
+import { videos } from "@/app/data";
 
 export default function DoctorDashboard() {
   const { user, isLoaded } = useUser();
@@ -25,63 +26,6 @@ export default function DoctorDashboard() {
   const [patients, setPatients] = useState<PatientType[]>([]);
   const [appointments, setAppointments] = useState<AppointmentDisplayType[]>([]);
 
-  const videos = [
-    {
-      id: 1,
-      title: "The Importance of Sleep for Health",
-      url: "https://www.youtube.com/embed/J-D8QGqOZVU?si=S0K-7mnP3W4yHdD2",
-    },
-    {
-      id: 2,
-      title: "Advances in Cancer Immunotherapy",
-      url: "https://www.youtube.com/embed/88E7CjtBae4?si=WcSuGWw5H-tnBkEF",
-    },
-    {
-      id: 3,
-      title: "Understanding Neurodegenerative Diseases",
-      url: "https://www.youtube.com/embed/RImBxfVH9H4?si=T-_THRohsqudzcOh",
-    },
-    {
-      id: 4,
-      title: "Gene Editing: CRISPR Technology and Its Impact",
-      url: "https://www.youtube.com/embed/UKbrwPL3wXE?si=ZSvfXZ5MiuAqQOOt",
-    },
-    {
-      id: 5,
-      title: "The Role of Artificial Intelligence in Healthcare",
-      url: "https://www.youtube.com/embed/uvqDTbusdUU?si=vf_1z0X0sJjz3MRA",
-    },
-    {
-      id: 6,
-      title: "Exploring the Human Microbiome and Its Effect on Health",
-      url: "https://www.youtube.com/embed/VzPD009qTN4si=mUbIG5aHDISd0K7g",
-    },
-    {
-      id: 7,
-      title: "The Future of Personalized Medicine",
-      url: "https://www.youtube.com/embed/Z7iLYHvqMAQ?si=HpTTjlJWDZDtrruo",
-    },
-    {
-      id: 8,
-      title: "Deep Dive into Immunology: The Immune System Explained",
-      url: "https://www.youtube.com/embed/k9QAyP3bYmc?si=37JW4TOTKnttYO6t",
-    },
-    {
-      id: 9,
-      title: "Chronic Pain Management: New Therapeutic Approaches",
-      url: "https://www.youtube.com/embed/kYK7utae7Cg?si=7434UM81h_5L-erc",
-    },
-    {
-      id: 10,
-      title: "The Gut-Brain Axis: How Your Gut Influences Mental Health",
-      url: "https://www.youtube.com/embed/_PLD5RLLvfQ?si=t0zSiRPr18KlGCWX",
-    },
-    {
-      id: 11,
-      title: "The Science Behind Stem Cell Therapy",
-      url: "https://www.youtube.com/embed/lUtdGVxsnlk?si=PbLg0A9LoytC1Tkl",
-    },
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,7 +34,6 @@ export default function DoctorDashboard() {
       const signal = controller.signal;
 
       try {
-        // Fetch doctor info
         const doctorRes = await fetch("/api/mongo/doctor", { signal });
         if (!doctorRes.ok) throw new Error("Failed to fetch doctors");
 
@@ -112,7 +55,7 @@ export default function DoctorDashboard() {
             }),
             signal,
           }),
-          fetch("/api/mongo/appointment", { signal }),
+          fetch(`/api/mongo/appointment?id=${doctor.id}`, { signal }),
         ]);
 
         if (!patientsRes.ok) throw new Error("Failed to fetch patients");

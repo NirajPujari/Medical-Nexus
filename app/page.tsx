@@ -31,8 +31,8 @@ export default function Page() {
           </CarouselContent>
 
           {/* Navigation Buttons */}
-          <CarouselPrevious className="absolute left-4 top-1/2 z-10 -translate-y-1/2 bg-highlight2 p-2 rounded-full shadow-md hover:bg-highlight1 transition-transform duration-300 active:scale-90" />
-          <CarouselNext className="absolute right-4 top-1/2 z-10 -translate-y-1/2 bg-highlight2 p-2 rounded-full shadow-md hover:bg-highlight1 transition-transform duration-300 active:scale-90" />
+          <CarouselPrevious className="absolute left-4 top-1/2 z-10 -translate-y-1/2 bg-highlight2 p-2 rounded-full shadow-md hover:bg-highlight1 transition-500 active:scale-90" />
+          <CarouselNext className="absolute right-4 top-1/2 z-10 -translate-y-1/2 bg-highlight2 p-2 rounded-full shadow-md hover:bg-highlight1 transition-500 active:scale-90" />
         </Carousel>
       </section>
 
