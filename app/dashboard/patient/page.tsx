@@ -7,6 +7,7 @@ import Image from "next/image";
 
 export default function PatientDashboard() {
   const { user } = useUser();
+  const [loading, setLoading] = useState(false);
 
   const [doctors, setDoctors] = useState([
     { id: 1, name: "Dr. Alice Johnson", specialty: "Cardiologist" },
@@ -32,7 +33,8 @@ export default function PatientDashboard() {
   ]);
 
   const [patientData, setPatientData] = useState({
-    name: user?.fullName,
+    id: 0,
+    name: "",
     age: 35,
     bloodGroup: "O+",
     medicalHistory: "Hypertension, Diabetes",
@@ -41,6 +43,50 @@ export default function PatientDashboard() {
   const [files, setFiles] = useState<File[]>([]);
 
   useEffect(() => {
+    setPatientData({
+      ...patientData,
+      name: user?.fullName ? String(user?.fullName) : "",
+    });
+  }, [user]);
+
+  useEffect(() => {
+    setLoading(true);
+    setLoading(false);
+    setDoctors([
+      { id: 1, name: "Dr. Alice Johnson", specialty: "Cardiologist" },
+      { id: 2, name: "Dr. Bob Smith", specialty: "Dermatologist" },
+      { id: 3, name: "Dr. Carol Williams", specialty: "Neurologist" },
+    ])
+    setAppointments([
+      {
+        id: 1,
+        doctorName: "Dr. Alice Johnson",
+        date: "2025-02-10",
+        time: "09:00 AM",
+        status: "Scheduled",
+      },
+      {
+        id: 2,
+        doctorName: "Dr. Bob Smith",
+        date: "2025-02-15",
+        time: "11:00 AM",
+        status: "Completed",
+      },
+    ])
+    // const fetchPatientData = async () => {
+    //   try {
+    //     const response = await fetch("/api/patient-data", {
+    //       method: "POST",
+    //     });
+    //     const data = await response.json();
+    //     setPatientData(data);
+    //     setLoading(false);
+    //   } catch (error) {
+    //     console.error(error);
+    //     setLoading(false);
+    //   }
+    // };
+    
     // Fetch real data for doctors, appointments, and patient info
     // Example: fetch("/api/doctors").then(res => res.json()).then(setDoctors);
   }, []);
@@ -77,16 +123,28 @@ export default function PatientDashboard() {
               Your Information
             </h2>
             <p className="text-highlight2">
-              <strong>Name:</strong> {patientData.name}
+              <strong>Name:</strong>{" "}
+              <span className={loading ? "animate-pulse blur-[2px]" : ""}>
+                {patientData.name}
+              </span>
             </p>
             <p className="text-highlight2">
-              <strong>Age:</strong> {patientData.age}
+              <strong>Age:</strong>{" "}
+              <span className={loading ? "animate-pulse blur-[2px]" : ""}>
+                {patientData.age}
+              </span>
             </p>
             <p className="text-highlight2">
-              <strong>Blood Group:</strong> {patientData.bloodGroup}
+              <strong>Blood Group:</strong>{" "}
+              <span className={loading ? "animate-pulse blur-[2px]" : ""}>
+                {patientData.bloodGroup}
+              </span>
             </p>
             <p className="text-highlight2">
-              <strong>Medical History:</strong> {patientData.medicalHistory}
+              <strong>Medical History:</strong>{" "}
+              <span className={loading ? "animate-pulse blur-[2px]" : ""}>
+                {patientData.medicalHistory}
+              </span>
             </p>
           </div>
 
@@ -147,7 +205,7 @@ export default function PatientDashboard() {
           </h3>
           {files.length === 0 ? (
             <p className="text-sm text-gray-400">No files uploaded.</p>
-          ) : ( 
+          ) : (
             <ul className="mt-2 space-y-3">
               {files.map((file, index) => {
                 const fileURL = URL.createObjectURL(file);
