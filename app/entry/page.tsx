@@ -149,26 +149,42 @@ export default function EntryForm() {
         <form onSubmit={handleSubmit} className="space-y-4 text-highlight1">
           {/* First Name & Last Name */}
           <div className="flex gap-4">
-            {["firstName", "lastName"].map((field) => (
-              <div key={field} className="flex-1">
+              <div key={"firstName"} className="flex-1">
                 <label className="block text-sm font-medium text-secondary">
-                  {field === "firstName" ? "First Name" : "Last Name"}
+                  First Name
                 </label>
                 <input
                   type="text"
-                  name={field}
-                  value={formData[field]}
+                  name={"firstName"}
+                  value={formData["firstName"]}
                   onChange={handleChange}
                   className={`w-full rounded-lg border p-2 text-secondary focus:ring ${
-                    errors[field] ? "border-red-500" : "border-gray-300"
+                    errors["firstName"] ? "border-red-500" : "border-gray-300"
                   }`}
                   required
                 />
-                {errors[field] && (
-                  <p className="text-xs text-red-500">{errors[field]}</p>
+                {errors["firstName"] && (
+                  <p className="text-xs text-red-500">{errors["firstName"]}</p>
                 )}
               </div>
-            ))}
+              <div key={"lastName"} className="flex-1">
+                <label className="block text-sm font-medium text-secondary">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name={"lastName"}
+                  value={formData["lastName"]}
+                  onChange={handleChange}
+                  className={`w-full rounded-lg border p-2 text-secondary focus:ring ${
+                    errors["lastName"] ? "border-red-500" : "border-gray-300"
+                  }`}
+                  required
+                />
+                {errors["lastName"] && (
+                  <p className="text-xs text-red-500">{errors["lastName"]}</p>
+                )}
+              </div>
           </div>
 
           {/* Email */}
