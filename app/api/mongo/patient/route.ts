@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import {getDatabase} from "@api/utils/mongo";
 
-export async function POST(req:NextResponse) {
+export async function POST(req:NextRequest) {
   const { name, email,id } = await req.json();
   try {
     const db = await getDatabase();
