@@ -6,7 +6,16 @@ export type PatientFileType = {
   filePath: string;
   fileType: string;
   fileHash: string;
-  localFile?: FileType
+  localFile?: FileType |File
+}
+export type PatientFileTypeT = {
+  fileName: string;
+  timestamp: string;
+  filePath: string;
+  fileType: string;
+  fileHash: string;
+  localFile?: FileType |File
+  url:string
 }
 
 export type PatientAuthorizedPersonsType = {

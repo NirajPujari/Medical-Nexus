@@ -7,9 +7,14 @@ export type AppointmentType = {
 }
 
 export type AppointmentDisplayType ={
+  _id: string;
   id: number,
   patientName: string,
   date: string,
-  time: string,
-  status: string, 
+  timeSlots: string;
+  dayOfWeek: number;
+  doctorId: number;
+  doctorName: string;
+  patientId: number;
+  status: string;
 }

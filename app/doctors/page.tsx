@@ -5,56 +5,50 @@ import { useRouter } from "next/navigation";
 import { LayoutGrid, List } from "lucide-react";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
-import { MotionUI } from "@/components/ui/motion"; // Import MotionUI component
+import { MotionUI } from "@/components/ui/motion";
 
 interface Doctor {
   _id: number;
+  id: number;
   name: string;
   specialty: string;
   image: string;
 }
 
-
-const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "2:00 PM", "4:00 PM"];
+const timeSlots = ["8am-10am", "11am-12pm", "1pm-3pm", "3pm-5pm"];
 
 export default function DoctorsList() {
-  const { isSignedIn } = useUser();
+  const { user, isSignedIn, isLoaded } = useUser();
   const router = useRouter();
+  const [userId, setUserId] = useState<string>();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
 
   useEffect(() => {
-    setViewMode(
-      typeof window !== "undefined" && window.innerWidth > 500
-        ? "grid"
-        : "list"
-    );
-    setIsLoading(true)
-    const fetchDoctors = async () => {
-      try {
-        const res = await fetch("/api/mongo/doctor");
-        if (!res.ok) throw new Error("Failed to fetch doctors");
-        const data = await res.json();
-        setDoctors(data);
-        setIsLoading(false)
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchDoctors( ); // Added delay for effect
+    if (isLoaded && user && user.unsafeMetadata.clientId) {
+      console.log(user.unsafeMetadata.clientId)
+      setUserId(String(user.unsafeMetadata.clientId))
+    }
+  }, [isLoaded, user,user?.unsafeMetadata.clientId]);
+
+  useEffect(() => {
+    setViewMode(window.innerWidth > 500 ? "grid" : "list");
+    setIsLoading(true);
+    fetch("/api/mongo/doctor")
+      .then((res) => res.json())
+      .then((data) => setDoctors(data))
+      .catch((error) => console.error("Failed to fetch doctors", error))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const openModal = useCallback(
     (doctor: Doctor) => {
-      if (!isSignedIn) {
-        router.push("/login");
-        return;
-      }
+      if (!isSignedIn) return router.push("/login");
       setSelectedDoctor(doctor);
       setIsModalOpen(true);
     },
@@ -63,33 +57,48 @@ export default function DoctorsList() {
 
   const handleConfirmBooking = useCallback(async () => {
     if (!selectedDoctor || !selectedDate || !selectedTime) {
-      alert("Please select a date and time slot.");
+      alert("Please select a doctor, date, and time slot.");
       return;
     }
 
+    const selectedDateObj = new Date(selectedDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    selectedDateObj.setHours(0, 0, 0, 0);
+    
+    if (selectedDateObj <= today || selectedDateObj.getDay() === 0) {
+      alert("Invalid date. Select a future date (not Sunday).")
+      return;
+    }
+    
+    const appointmentData = {
+      patientId: userId,
+      doctorName:selectedDoctor.name,
+      doctorId: selectedDoctor.id,
+      timeSlots: selectedTime,
+      dayOfWeek: selectedDateObj.getDay() - 1,
+      date: selectedDate,
+      status:"Scheduled"
+    };
+
     try {
-      const res = await fetch("/api/appointment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          patientId: "",
-          doctorId: selectedDoctor._id,
-          date: selectedDate,
-          timeSlot: selectedTime,
+      const [res1, res2] = await Promise.all([
+        fetch("/api/appointment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(appointmentData),
         }),
-      });
-
-      if (!res.ok) throw new Error("Failed to book appointment.");
-
-      alert("Appointment booked successfully!");
-      setIsModalOpen(false);
-      setSelectedDate("");
-      setSelectedTime("");
+        fetch("/api/mongo/appointment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(appointmentData),
+        }),
+      ]);
+      if (!res1.ok || !res2.ok) throw new Error("Booking failed.");
+      router.push("/dashboard/patient")
     } catch (error) {
-      console.error(error);
-      alert("Error booking appointment.");
+      console.error("Error booking appointment:", error);
+      alert("An error occurred. Please try again later.");
     }
   }, [selectedDoctor, selectedDate, selectedTime]);
 
@@ -206,7 +215,7 @@ export default function DoctorsList() {
             <h2 className="text-lg font-semibold text-secondary">
               Book Appointment
             </h2>
-            <p className="text-sm text-highlight2">{selectedDoctor.name}</p>
+            <p className="text-sm text-highlight2">{selectedDoctor.name} <span className="text-xs">({selectedDoctor.specialty})</span></p>
 
             <label className="mt-4 block text-sm font-medium text-card">
               Select Date
@@ -216,8 +225,8 @@ export default function DoctorsList() {
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               className="w-full rounded-md p-2 text-highlight2 bg-primary focus:outline-none"
+              min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0]}
             />
-
             <label className="mt-4 block text-sm font-medium text-card">
               Select Time Slot
             </label>

@@ -3,8 +3,7 @@ import path from 'path';
 import { NextResponse } from 'next/server';
 
 
-// Helper function to get MIME type based on file extension
-const getMimeType = (filePath: string): string => {
+export const getMimeType = (filePath: string): string => {
   const extname = path.extname(filePath).toLowerCase();
   
   const mimeTypes: { [key: string]: string } = {
@@ -24,6 +23,7 @@ const getMimeType = (filePath: string): string => {
 
   return mimeTypes[extname] || 'application/octet-stream'; // Default to binary stream for unknown types
 };
+
 
 export async function GET(req: Request) {
   try {

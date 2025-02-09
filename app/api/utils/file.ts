@@ -5,6 +5,9 @@ import path from 'path';
 
 const UPLOAD_DIR = path.join(process.cwd(), 'uploads', "patients");
 
+// Helper function to get MIME type based on file extension
+
+
 // Ensure the upload directory exists
 export const ensureUploadDirExists = (uploadDir: string) => {
   if (!fs.existsSync(uploadDir)) {
@@ -20,14 +23,15 @@ export const saveFile = async (fileBuffer: Buffer, filename: string) => {
 };
 
 // Helper function to retrieve all files in a directory
-export const getAllFiles = async (dir: string = UPLOAD_DIR): Promise<FileType[]> => {
+export const getAllFiles = async (dir: string): Promise<FileType[]> => {
   if (!fs.existsSync(dir)) return [];
-
+  
   const items = await fs.promises.readdir(dir);
   const files: FileType[] = [];
 
   for (const item of items) {
     const itemPath = path.join(dir, item);
+    console.log(itemPath)
     const stats = await fs.promises.stat(itemPath);
 
     if (stats.isDirectory()) {

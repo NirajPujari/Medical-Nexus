@@ -3,11 +3,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import { Users, Stethoscope, Phone, Info } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Navbar = () => {
   const pathname = usePathname();
   const { user } = useUser()
+  const [doc,setDoc] = useState(false)
   const noPaths = ["/login", "/signup", "/entry"];
+
+  useEffect(() => {
+      if (user && user.publicMetadata.isDoc) {
+        console.log(user.publicMetadata.isDoc)
+        setDoc(Boolean(user.publicMetadata.isDoc))
+      }
+    }, [user,user?.publicMetadata.isDoc]);
 
   if (noPaths.some(sub => pathname.includes(sub))) {
     return;
@@ -28,7 +37,10 @@ export const Navbar = () => {
               label="Our Services"
               Icons={Stethoscope}
             />
-            <NavItem href="/doctors" label="Our Doctors" Icons={Users} />
+            {
+              !doc ? <NavItem href="/doctors" label="Our Doctors" Icons={Users} /> : ""
+            }
+
             <NavItem href="/about" label="About Us" Icons={Info} />
             <NavItem href="/contact" label="Contact" Icons={Phone} />
           </div>
@@ -42,23 +54,23 @@ export const Navbar = () => {
           <SignedIn>
             <div className="flex justify-center items-center gap-4">
 
-          <Link href={user?.publicMetadata?.isDoc ? "/dashboard/doctor" : "/dashboard/patient"} className="px-4 py-2 rounded-lg bg-card text-primary font-semibold transition-500 hover:bg-highlight2 hover:scale-105">
+              <Link href={user?.publicMetadata?.isDoc ? "/dashboard/doctor" : "/dashboard/patient"} className="px-4 py-2 rounded-lg bg-card text-primary font-semibold transition-500 hover:bg-highlight2 hover:scale-105">
                 Dashboard
               </Link>
-            <div className="transition-500 flex justify-center rounded-3xl p-2 hover:bg-highlight2 hover:text-primary">
-              <UserButton
-                appearance={{
-                  variables: {
-                    colorPrimary: "#002b5b",
-                    colorBackground: "#e6f4fa",
-                    colorText: "#002b5b",
-                    colorTextSecondary: "#004f8a",
-                    colorNeutral: "#004f8a",
-                  },
-                }}
-                afterMultiSessionSingleSignOutUrl="/"
-              />
-            </div>
+              <div className="transition-500 flex justify-center rounded-3xl p-2 hover:bg-highlight2 hover:text-primary">
+                <UserButton
+                  appearance={{
+                    variables: {
+                      colorPrimary: "#002b5b",
+                      colorBackground: "#e6f4fa",
+                      colorText: "#002b5b",
+                      colorTextSecondary: "#004f8a",
+                      colorNeutral: "#004f8a",
+                    },
+                  }}
+                  afterMultiSessionSingleSignOutUrl="/"
+                />
+              </div>
             </div>
           </SignedIn>
         </div>

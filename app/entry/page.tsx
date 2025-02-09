@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 
 export default function EntryForm() {
-  const { user,isSignedIn } = useUser();
+  const { user } = useUser();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -31,11 +31,11 @@ export default function EntryForm() {
     }
   }, [user]);
   
-  useEffect(() => {
-    if (isSignedIn) {
-      router.back()
-    }
-  }, [isSignedIn]);
+  // useEffect(() => {
+  //   if (isSignedIn) {
+  //     router.back()
+  //   }
+  // }, [isSignedIn]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -231,7 +231,7 @@ export default function EntryForm() {
                 name="bloodGroup"
                 value={formData.bloodGroup}
                 onChange={handleChange}
-                className="w-full rounded-lg border bg-white p-2 text-secondary focus:ring"
+                className="w-full rounded-lg border h-11 bg-white p-2 text-secondary focus:ring"
               >
                 <option value="">Select Blood Group</option>
                 {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map(

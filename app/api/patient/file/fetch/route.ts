@@ -28,15 +28,13 @@ export async function POST(req: NextRequest) {
 
   try {
     const downloadDir = await fetchWeb3Client();
-    const localFiles = await getAllFiles(path.join(downloadDir, "uploads", "patients", String(patientId)));
+    const localFiles = await getAllFiles(path.join(downloadDir.split('\\').slice(0, -1).join('\\'), "uploads", "patients", String(patientId)));
 
     // Schedule cleanup after processing
     setTimeout(() => deleteFilesAndFolder(["/temps"]), 2000);
 
     const patientData = await contract.getPatient(Number(patientId), String(accessorId));
     const patientFiles = patientData[5]
-
-    console.log(patientData, patientFiles)
 
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -22,73 +22,156 @@ export default function DoctorDashboard() {
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-
   const [patients, setPatients] = useState<PatientType[]>([]);
   const [appointments, setAppointments] = useState<AppointmentDisplayType[]>([]);
 
 
   useEffect(() => {
+    if (!isLoaded) return;
+  
+    const controller = new AbortController();
+    const signal = controller.signal;
+  
     const fetchData = async () => {
       setLoading(true);
-      const controller = new AbortController();
-      const signal = controller.signal;
-
+  
       try {
+        // Fetch doctors first
         const doctorRes = await fetch("/api/mongo/doctor", { signal });
         if (!doctorRes.ok) throw new Error("Failed to fetch doctors");
-
+  
         const doctorsData = await doctorRes.json();
         const doctor = doctorsData.find(
-          (doc: { name: string; id: string }) => doc.name === user?.fullName,
+          (doc: { name: string; id: string }) => doc.name === user?.fullName
         );
-
+  
         if (!doctor) throw new Error("Doctor not found");
-
+  
         // Fetch patients and appointments concurrently
-        const [patientsRes, appointmentsRes] = await Promise.all([
+        const responses = await Promise.allSettled([
           fetch("/api/doctor/patients/fetch", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              doctorId: doctor.id,
-              accessorId: doctor.id,
-            }),
+            body: JSON.stringify({ doctorId: doctor.id, accessorId: doctor.id }),
             signal,
           }),
-          fetch(`/api/mongo/appointment?id=${doctor.id}`, { signal }),
+          fetch("/api/mongo/appointment", { signal }),
+          fetch("/api/doctor/appointment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ doctorId: doctor.id }),
+            signal,
+          }),
         ]);
+  
+        // Process responses
+        const [patientsRes, appointments1Res, appointments2Res] = responses;
+        if (patientsRes.status === "rejected") console.error("Patients API Error:", patientsRes.reason);
+        if (appointments1Res.status === "rejected") console.error("MongoDB Appointments API Error:", appointments1Res.reason);
+        if (appointments2Res.status === "rejected") console.error("Doctor Appointments API Error:", appointments2Res.reason);
+  
+        const patientsData = patientsRes.status === "fulfilled" ? await patientsRes.value.json() : null;
+        if (patientsData) setPatients(patientsData?.doctor);
+        
+        const appointments1Data = appointments1Res.status === "fulfilled" ? await appointments1Res.value.json() : [];
+        const appointments2Data = appointments2Res.status === "fulfilled" ? await appointments2Res.value.json() : [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ids = appointments2Data.appointments.map((item: any) => ({ id: item.id }));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const appointments = appointments1Data.filter((appointment: any) => appointment.doctorId === doctor.id).map((item: any, index: number) => ({ ...item, ...ids[index] }));
 
-        if (!patientsRes.ok) throw new Error("Failed to fetch patients");
-        if (!appointmentsRes.ok)
-          throw new Error("Failed to fetch appointments");
-
-        const [patientsData, appointmentsData] = await Promise.all([
-          patientsRes.json(),
-          appointmentsRes.json(),
-        ]);
-        console.log(patientsData)
-
-        setPatients(patientsData?.doctor || []);
-        setAppointments(appointmentsData?.reverse() || []);
+        setAppointments(appointments.reverse());
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
-
-      return () => controller.abort(); // Cleanup request on unmount
     };
-
-    if (isLoaded) {
-      fetchData();
-    }
+  
+    fetchData();
+  
+    return () => controller.abort(); // Cleanup on unmount
   }, [isLoaded]);
+  
 
   // Open Modal with Patient Details
   const openModal = (patient: PatientType) => {
     setSelectedPatient(patient);
     setIsModalOpen(true);
   };
+
+  const handleComplete = async (appointmentId: number) => {
+    const newAppointments = appointments.map((appointment) => {
+      if (appointment.id == appointmentId) {
+        appointment.status = "Completed";
+        return appointment
+      }
+      return appointment
+    })
+    setAppointments(newAppointments)
+    
+    const updateAppointments = appointments.filter((appointment) => appointment.id == appointmentId)
+    try {
+      const response1 = await fetch("/api/appointment/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ appointmentId }),
+      });
+      
+      if (!response1.ok) {
+        throw new Error("Failed to completed appointment");
+      }
+      const response2 = await fetch("/api/mongo/appointment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ updateAppointments }),
+      });
+      
+      if (!response2.ok) {
+        throw new Error("Failed to completed appointment");
+      }
+      console.log("Completed appointment");
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
+  };
+  
+  const handleCancel = async (appointmentId: number) => {
+    const newAppointments = appointments.map((appointment) => {
+      if (appointment.id == appointmentId) {
+        appointment.status = "Cancelled";
+        return appointment
+      }
+      return appointment
+    })
+    setAppointments(newAppointments)
+    
+    const updateAppointments = appointments.filter((appointment) => appointment.id == appointmentId)
+    try {
+      const response1 = await fetch("/api/appointment/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ appointmentId }),
+      });
+      
+      if (!response1.ok) {
+        throw new Error("Failed to cancel appointment");
+      }
+      const response2 = await fetch("/api/mongo/appointment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ updateAppointments }),
+      });
+      
+      if (!response2.ok) {
+        throw new Error("Failed to cancel appointment");
+      }
+      console.log("Cancel appointment");
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
+  };
+  
 
   return (
     <div className="flex flex-col items-center bg-primary p-6">
@@ -163,18 +246,39 @@ export default function DoctorDashboard() {
                 <ul className="flex max-h-[300px] flex-col gap-4 overflow-y-auto">
                   {appointments.map((appointment) => (
                     <li
-                      key={appointment.id}
-                      className="cursor-pointer rounded-2xl border-b border-highlight2 p-4 text-highlight2 transition-all duration-300 hover:bg-highlight2 hover:text-highlight1 focus:outline-none focus:ring-2 focus:ring-highlight2 md:basis-1/2 lg:basis-1/3"
-                      role="listitem"
-                      aria-label={`Appointment with ${appointment.patientName} on ${appointment.date} at ${appointment.time}`}
-                    >
-                      <h3 className="text-lg font-medium">
-                        Patient: {appointment.patientName}
-                      </h3>
-                      <p className="text-sm">Date: {appointment.date}</p>
-                      <p className="text-sm">Time: {appointment.time}</p>
-                      <p className="text-sm">Status: {appointment.status}</p>
-                    </li>
+                    key={appointment._id}
+                    className="cursor-pointer rounded-2xl border-b border-highlight2 p-4 text-highlight2 transition-all duration-300 hover:bg-highlight2 hover:text-highlight1 focus:outline-none focus:ring-2 focus:ring-highlight2 md:basis-1/2 lg:basis-1/3"
+                    role="listitem"
+                    aria-label={`Appointment with ${appointment.patientName} on ${appointment.date} at ${appointment.timeSlots}`}
+                  >
+                    <h3 className="text-lg font-medium">
+                      Patient: {appointment.patientName}
+                    </h3>
+                    <p className="text-sm">Date: {appointment.date}</p>
+                    <p className="text-sm">Time: {appointment.timeSlots}</p>
+                    <p className="text-sm">Status: {appointment.status}</p>
+                  
+                    {/* Buttons */}
+                    {appointment.status === "Scheduled" ?
+                      <div className="mt-3 flex gap-3">
+                        <button
+                          onClick={() => handleComplete(appointment.id)}
+                          className="rounded-lg bg-green-600 px-3 py-1 text-white transition-all duration-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                          aria-label={`Mark appointment with ${appointment.patientName} as complete`}
+                        >
+                          Complete
+                        </button>
+                        <button
+                          onClick={() => handleCancel(appointment.id)}
+                          className="rounded-lg bg-red-600 px-3 py-1 text-white transition-all duration-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400"
+                          aria-label={`Cancel appointment with ${appointment.patientName}`}
+                        >
+                          Cancel
+                        </button>
+                      </div>:""
+                    }
+                  </li>
+                  
                   ))}
                 </ul>
               )}
