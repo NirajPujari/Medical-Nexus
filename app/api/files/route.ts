@@ -3,7 +3,7 @@ import path from 'path';
 import { NextResponse } from 'next/server';
 
 
-export const getMimeType = (filePath: string): string => {
+const getMimeType = (filePath: string): string => {
   const extname = path.extname(filePath).toLowerCase();
   
   const mimeTypes: { [key: string]: string } = {
