@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   const contract = initContract();
 
   try {
-    const temp = await contract.updateAppointmentStatus(Number(appointmentId), "Cancelled");
+    await contract.updateAppointmentStatus(Number(appointmentId), "Cancelled");
     return NextResponse.json({ message: 'Appointment cancelled successfully' });
   } catch (error) {
     return NextResponse.json({ message: 'Error cancelling appointment', error }, { status: 500 });
