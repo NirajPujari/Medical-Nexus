@@ -23,7 +23,7 @@ export const saveFile = async (fileBuffer: Buffer, filename: string) => {
 };
 
 // Helper function to retrieve all files in a directory
-export const getAllFiles = async (dir: string): Promise<FileType[]> => {
+export const getAllFiles = async (dir: string=UPLOAD_DIR): Promise<FileType[]> => {
   if (!fs.existsSync(dir)) return [];
   
   const items = await fs.promises.readdir(dir);
