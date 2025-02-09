@@ -13,7 +13,6 @@ export const Navbar = () => {
 
   useEffect(() => {
       if (user && user.publicMetadata.isDoc) {
-        console.log(user.publicMetadata.isDoc)
         setDoc(Boolean(user.publicMetadata.isDoc))
       }
     }, [user,user?.publicMetadata.isDoc]);

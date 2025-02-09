@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
@@ -23,6 +24,7 @@ export default function DoctorDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [patients, setPatients] = useState<PatientType[]>([]);
+  const [authers, setAuthers] = useState<string[][]>([]);
   const [appointments, setAppointments] = useState<AppointmentDisplayType[]>([]);
 
 
@@ -36,7 +38,7 @@ export default function DoctorDashboard() {
       setLoading(true);
   
       try {
-        // Fetch doctors first
+        // Fetch Doctor Details
         const doctorRes = await fetch("/api/mongo/doctor", { signal });
         if (!doctorRes.ok) throw new Error("Failed to fetch doctors");
   
@@ -48,7 +50,7 @@ export default function DoctorDashboard() {
         if (!doctor) throw new Error("Doctor not found");
   
         // Fetch patients and appointments concurrently
-        const responses = await Promise.allSettled([
+        const [patientsRes, appointments1Res, appointments2Res] = await Promise.all([
           fetch("/api/doctor/patients/fetch", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -64,23 +66,51 @@ export default function DoctorDashboard() {
           }),
         ]);
   
-        // Process responses
-        const [patientsRes, appointments1Res, appointments2Res] = responses;
-        if (patientsRes.status === "rejected") console.error("Patients API Error:", patientsRes.reason);
-        if (appointments1Res.status === "rejected") console.error("MongoDB Appointments API Error:", appointments1Res.reason);
-        if (appointments2Res.status === "rejected") console.error("Doctor Appointments API Error:", appointments2Res.reason);
-  
-        const patientsData = patientsRes.status === "fulfilled" ? await patientsRes.value.json() : null;
+        const patientsData = patientsRes.ok ? await patientsRes.json() : null;
         if (patientsData) setPatients(patientsData?.doctor);
-        
-        const appointments1Data = appointments1Res.status === "fulfilled" ? await appointments1Res.value.json() : [];
-        const appointments2Data = appointments2Res.status === "fulfilled" ? await appointments2Res.value.json() : [];
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
+        const appointments1Data = appointments1Res.ok ? await appointments1Res.json() : [];
+        const appointments2Data = appointments2Res.ok ? await appointments2Res.json() : [];
+  
+        // Map appointments with IDs
         const ids = appointments2Data.appointments.map((item: any) => ({ id: item.id }));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const appointments = appointments1Data.filter((appointment: any) => appointment.doctorId === doctor.id).map((item: any, index: number) => ({ ...item, ...ids[index] }));
-
-        setAppointments(appointments.reverse());
+  
+        const appointments = appointments1Data
+          .filter((appointment: any) => appointment.doctorId === doctor.id)
+          .map((item: any, index: number) => ({ ...item, ...ids[index] }))
+          .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  
+        setAppointments(appointments);
+  
+        // Fetch doctor info for each patient asynchronously
+        await Promise.all(
+          patientsData?.doctor.map(async (data: any) => {
+            const names: string[] = await Promise.all(
+              data.authorizedPersons.map(async (authData: any) => {
+                try {
+                  const res = await fetch("/api/doctor/fetch", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      doctorId: authData.personAddress,
+                      accessorId: authData.personAddress,
+                    }),
+                    signal,
+                  });
+  
+                  if (!res.ok) throw new Error("Failed to fetch authorized person");
+                  const result = await res.json();
+                  return String(result.doctor.name);
+                } catch (err) {
+                  console.error("Error fetching authorized person:", err);
+                  return null;
+                }
+              })
+            );
+  
+            setAuthers((prev) => [...prev, names]);
+          })
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -93,84 +123,43 @@ export default function DoctorDashboard() {
     return () => controller.abort(); // Cleanup on unmount
   }, [isLoaded]);
   
-
   // Open Modal with Patient Details
   const openModal = (patient: PatientType) => {
     setSelectedPatient(patient);
     setIsModalOpen(true);
   };
-
-  const handleComplete = async (appointmentId: number) => {
-    const newAppointments = appointments.map((appointment) => {
-      if (appointment.id == appointmentId) {
-        appointment.status = "Completed";
-        return appointment
-      }
-      return appointment
-    })
-    setAppointments(newAppointments)
-    
-    const updateAppointments = appointments.filter((appointment) => appointment.id == appointmentId)
+  
+  // Utility function for handling status updates
+  const updateAppointmentStatus = async (appointmentId: number, status: string, apiPath: string) => {
     try {
-      const response1 = await fetch("/api/appointment/complete", {
-        method: "POST",
+      setAppointments((prev) =>
+        prev.map((appointment) =>
+          appointment.id === appointmentId ? { ...appointment, status } : appointment
+        )
+      );
+  
+      const response = await fetch(apiPath, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ appointmentId }),
+        body: JSON.stringify({ appointmentId, status }),
       });
-      
-      if (!response1.ok) {
-        throw new Error("Failed to completed appointment");
-      }
-      const response2 = await fetch("/api/mongo/appointment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updateAppointments }),
-      });
-      
-      if (!response2.ok) {
-        throw new Error("Failed to completed appointment");
-      }
-      console.log("Completed appointment");
+  
+      if (!response.ok) throw new Error(`Failed to ${status.toLowerCase()} appointment`);
+  
+      console.log(`${status} appointment successfully`);
     } catch (error) {
-      console.error("Error deleting file:", error);
+      console.error(`Error updating appointment status:`, error);
     }
   };
   
-  const handleCancel = async (appointmentId: number) => {
-    const newAppointments = appointments.map((appointment) => {
-      if (appointment.id == appointmentId) {
-        appointment.status = "Cancelled";
-        return appointment
-      }
-      return appointment
-    })
-    setAppointments(newAppointments)
-    
-    const updateAppointments = appointments.filter((appointment) => appointment.id == appointmentId)
-    try {
-      const response1 = await fetch("/api/appointment/cancel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ appointmentId }),
-      });
-      
-      if (!response1.ok) {
-        throw new Error("Failed to cancel appointment");
-      }
-      const response2 = await fetch("/api/mongo/appointment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updateAppointments }),
-      });
-      
-      if (!response2.ok) {
-        throw new Error("Failed to cancel appointment");
-      }
-      console.log("Cancel appointment");
-    } catch (error) {
-      console.error("Error deleting file:", error);
-    }
-  };
+  // Handle Complete Appointment
+  const handleComplete = async (appointmentId: number) =>
+    updateAppointmentStatus(appointmentId, "Completed", "/api/appointment/complete");
+  
+  // Handle Cancel Appointment
+  const handleCancel = async (appointmentId: number) =>
+    updateAppointmentStatus(appointmentId, "Cancelled", "/api/appointment/cancel");
+  
   
 
   return (
@@ -356,7 +345,7 @@ export default function DoctorDashboard() {
                 ) : (
                   selectedPatient.authorizedPersons.map((person, index) => (
                     <li key={index} className="text-sm text-gray-700">
-                      {person.personAddress} - <strong>{person.role}</strong>
+                      {authers[patients.findIndex(item=>item.id==selectedPatient.id)][index]} - <strong>{person.role}</strong>
                     </li>
                   ))
                 )}
