@@ -57,7 +57,7 @@ const Combobox: FC<ComboboxProps> = ({
   placeholder = "Select an option...",
   style = {
     button: "",
-    command: "",
+    content: "",
     commandItem: "",
   },
   onSelect,

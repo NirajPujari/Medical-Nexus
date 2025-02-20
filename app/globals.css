@@ -33,6 +33,22 @@
 	}
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 2px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
 /* Base Styles */
 body {
 	background-color: var(--background);

@@ -19,20 +19,21 @@ export async function POST(req: NextRequest) {
 
   try {
     const filePath = path.join('uploads', "patients", patientId, fileName);
-    setTimeout(async () => {
-      const localFilePath = path.join(process.cwd(), 'uploads', "patients", patientId)
-      ensureUploadDirExists(localFilePath);
-      const fileBuffer = Buffer.from(await file.arrayBuffer());
-      await saveFile(fileBuffer, path.join(patientId, fileName));
+    const localFilePath = path.join(process.cwd(), 'uploads', "patients", patientId)
+    ensureUploadDirExists(localFilePath);
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const saveFilePromise = saveFile(fileBuffer, path.join(patientId, fileName));
 
-      const files = await getAllFiles();
-      const fileObjects = files.map(f => new File([f.fileData], f.filePath));
-      fileObjects.push(new File([files.map(f => f.filePath).join(",")], "entries.txt"))
+    const filesPromise = getAllFiles();
 
-      const hash = await uploadWeb3Client(fileObjects);
-      const tx = await contract.manageFileInPatient(Number(patientId), -1, fileName, Date(), filePath, fileType, hash, accessorId);
-      await tx.wait();
-    }, 1);
+    const [_, files] = await Promise.all([saveFilePromise, filesPromise]);
+    console.log(_)
+    const fileObjects = files.map(f => new File([f.fileData], f.filePath));
+    fileObjects.push(new File([files.map(f => f.filePath).join(",")], "entries.txt"))
+
+    const hash = await uploadWeb3Client(fileObjects);
+    const tx = await contract.manageFileInPatient(Number(patientId), -1, fileName, Date(), filePath, fileType, hash, accessorId);
+    await tx.wait();
 
     return NextResponse.json({ message: 'File added successfully', filePath });
   } catch (error) {

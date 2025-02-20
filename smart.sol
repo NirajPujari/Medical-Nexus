@@ -115,7 +115,7 @@ contract HospitalManagementSystem {
     ) private view returns (bool) {
         if (
             compareStrings(_accessorId, ADMIN) ||
-            compareStrings(doctors[id - 1].doctorAddress, _accessorId)
+            compareStrings(uintToString(id), _accessorId)
         ) {
             return true;
         }
@@ -302,10 +302,17 @@ contract HospitalManagementSystem {
             "Not authorized to view this doctor's data"
         );
 
+        uint256[] storage assignedPatients = doctors[_doctorId - 1].assignedPatients;
+        for (uint256 i = 0; i < assignedPatients.length; i++) {
+            if (assignedPatients[i] == _patientId) {
+                return; 
+            }
+        }
+
         doctors[_doctorId - 1].assignedPatients.push(_patientId);
         addAuthorizedPerson(
             _patientId,
-            doctors[_doctorId - 1].doctorAddress,
+            uintToString(_doctorId),
             "Doctor"
         );
     }
