@@ -142,9 +142,8 @@ export default function PatientDashboard() {
 
   // Handle File Uploads
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSubmit({ ...submit, file: true })
     if (!e.target.files || !userId) return;
-
+    
     const file = e.target.files[0]; // Only select the first file
     if (!file) return;
 
@@ -169,8 +168,9 @@ export default function PatientDashboard() {
     formData.append("accessorId", String(userId));
     formData.append("fileName", file.name);
     formData.append("fileType", file.type);
-
+    
     try {
+      setSubmit({ ...submit, file: true })
       const response = await fetch("/api/patient/file", {
         method: "POST",
         body: formData,
@@ -199,36 +199,35 @@ export default function PatientDashboard() {
 
   // File Deletion Function
   const handleFileDelete = async (index: number) => {
-    setSubmit({ ...submit, file: true })
     const payload = {
       patientId: userId,
       fileIndex: index,
       filePath: files[index].filePath,
       accessorId: userId,
     };
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-
+    
     try {
+      setSubmit({ ...submit, file: true })
       const response = await fetch("/api/patient/file/delete", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
+      
       if (!response.ok) {
         throw new Error("Failed to delete file");
       }
-
+      
       console.log("File deleted");
     } catch (error) {
       console.error("Error deleting file:", error);
     } finally {
+      setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
       setSubmit({ ...submit, file: false })
     }
   };
 
   const handleCancel = async (id: number) => {
-    setSubmit({ ...submit, appointmentC: true })
     const newAppointments = appointments.map((appointment) => {
       if (appointment.id == id) {
         appointment.status = "Cancelled";
@@ -236,16 +235,16 @@ export default function PatientDashboard() {
       }
       return appointment
     })
-    setAppointments(newAppointments)
-
+    
     const updateAppointments = appointments.filter((appointment) => appointment.id == id)
     try {
+      setSubmit({ ...submit, appointmentC: true })
       const response1 = await fetch("/api/appointment/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ appointmentId: id }),
       });
-
+      
       if (!response1.ok) {
         throw new Error("Failed to cancel appointment");
       }
@@ -254,7 +253,7 @@ export default function PatientDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ updateAppointments }),
       });
-
+      
       if (!response2.ok) {
         throw new Error("Failed to cancel appointment");
       }
@@ -262,20 +261,20 @@ export default function PatientDashboard() {
     } catch (error) {
       console.error("Error deleting file:", error);
     } finally {
+      setAppointments(newAppointments)
       setSubmit({ ...submit, appointmentC: false })
     }
   }
 
   const handleConfirmBooking = useCallback(async () => {
-    setSubmit({ ...submit, appointmentP: true });
     if (!selectedDoctor || !selectedDate || !selectedTime) {
       return alert("Please select a doctor, date, and time slot.");
     }
-
+    
     if (!userId) {
       return alert("Invalid user ID. Please log in.");
     }
-
+    
     const selectedDateObj = new Date(selectedDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -284,11 +283,11 @@ export default function PatientDashboard() {
     if (selectedDateObj <= today) {
       return alert("Invalid date. Please select a future date.");
     }
-
+    
     if (selectedDateObj.getDay() === 0) {
       return alert("Appointments cannot be scheduled on Sundays.");
     }
-
+    
     const appointmentData = {
       patientId: Number(userId),
       doctorName: selectedDoctor.name,
@@ -302,6 +301,7 @@ export default function PatientDashboard() {
     };
 
     try {
+      setSubmit({ ...submit, appointmentP: true });
       const [res1, res2] = await Promise.all([
         fetch("/api/appointment", {
           method: "POST",

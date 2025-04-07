@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   try {
     const IDS = await contract.fetchLatestID()
     const id = Number(IDS[2])
-    
+
     const tx1 = await contract.bookAppointment(id, Number(patientId), Number(doctorId), timeSlots, dayOfWeek);
     await tx1.wait()
     const tx2 = await contract.assignPatientToDoctor(Number(patientId), String(doctorId), String(doctorId));

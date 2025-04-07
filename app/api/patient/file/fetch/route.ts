@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     const localFiles = await getAllFiles(path.join(downloadDir.split('\\').slice(0, -1).join('\\'), "uploads", "patients", String(patientId)));
 
     // Schedule cleanup after processing
-    setTimeout(() => deleteFilesAndFolder(["/temps"]), 2000);
+    setTimeout(() => deleteFilesAndFolder(["/temps"]), 10000);
 
     const patientData = await contract.getPatient(Number(patientId), String(accessorId));
     const patientFiles = patientData[5]

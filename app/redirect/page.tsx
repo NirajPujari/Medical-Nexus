@@ -16,6 +16,8 @@ export default function Home() {
     const isNewUser = user?.unsafeMetadata?.isNewUser ?? true;
     const isDoctor = user?.publicMetadata?.isDoc ?? false;
 
+    router.replace("/entry");
+
     if (isDoctor) {
       router.replace("/dashboard/doctor");
     } else if (isNewUser) {

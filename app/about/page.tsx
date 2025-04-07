@@ -2,9 +2,22 @@
 
 import { Activity, Calendar, Stethoscope, ThumbsUp, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { MotionUI } from "@/components/ui/motion"; // Import the MotionUI component
+import { useCallback } from "react";
+import { useUser } from "@clerk/nextjs";
 
 export default function Home() {
+  const {  isSignedIn } = useUser();
+  const router = useRouter();
+
+  const openModal = useCallback(
+      () => {
+        if (!isSignedIn) return router.push("/login");
+        return router.push("/dashboard/patient")
+      },
+      [isSignedIn, router]
+    );
   return (
     <main>
       {/* Hero Section */}
@@ -28,11 +41,11 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-wrap gap-4">
-              <button className="transition-500 flex items-center justify-center rounded-lg bg-highlight1 px-6 py-2 font-semibold text-highlight2 hover:bg-card">
+              <button onClick={openModal} className="transition-500 flex items-center justify-center rounded-lg bg-highlight1 px-6 py-2 font-semibold text-highlight2 hover:bg-card">
                 Book an Appointment
                 <ArrowRight className="ml-2 h-4 w-4" />
               </button>
-              <button className="transition-500 rounded-lg border-2 border-highlight1 px-6 py-2 text-highlight1 hover:bg-card">
+              <button onClick={()=>router.push("/doctors")} className="transition-500 rounded-lg border-2 border-highlight1 px-6 py-2 text-highlight1 hover:bg-card">
                 Take a Tour
               </button>
             </div>
@@ -168,7 +181,7 @@ export default function Home() {
                 adults who need help. We help you recover from depression,
                 anxiety, and various concerns.
               </p>
-              <button className="transition-500 flex items-center justify-center gap-2 rounded-lg bg-highlight1 px-6 py-2 font-semibold text-highlight2 hover:bg-card">
+              <button onClick={()=>router.push("/contact")} className="transition-500 flex items-center justify-center gap-2 rounded-lg bg-highlight1 px-6 py-2 font-semibold text-highlight2 hover:bg-card">
                 Get in Touch
                 <ArrowRight className="h-4 w-4" />
               </button>
@@ -291,7 +304,7 @@ export default function Home() {
                   </div>
                 </div>
                 <p className="text-lg text-card italic">
-                &quot;{testimonial.feedback}&quot;
+                  &quot;{testimonial.feedback}&quot;
                 </p>
               </div>
             ))}
