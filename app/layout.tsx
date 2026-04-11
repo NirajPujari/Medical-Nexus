@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Navbar } from "@/components/navbar";
-// import { Redirect } from "@/components/redirect";
-import { ClerkProvider } from "@clerk/nextjs";
-import { Footer } from "@/components/footer";
+import { Inter } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,18 +15,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className="antialiased">
-          <Navbar />
-          {/* <Redirect /> */}
-          {children}
-          <Footer />
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" className={cn("h-full antialiased", "font-sans", inter.variable)}>
+      <body className="min-h-full flex flex-col">{children}</body>
+    </html>
   );
 }
